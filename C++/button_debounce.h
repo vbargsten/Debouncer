@@ -10,9 +10,11 @@
 // amount of allowable debouncing states is adequate. Below is an example of how 
 // the button debouncer would work in practice in relation to a single button:
 // 
-// Real Signal:     0011111111111110000000000000011111111111111111110000000000
-// Bouncy Signal:   0010110111111111010000000000001010111011111111110101000000
-// Debounced Sig:   0000000000000011000000000000000000000000000001110000000000
+// Real Signal:      00111111111111100000000000000
+// Bouncy Signal:    00101101111111110100000000000
+// Debounced Signal: 00000000000000111111111110000
+// ButtonPressed:    00000000000000100000000000000
+// ButtonReleased:   00000000000000000000000001000
 // 
 // The debouncing algorithm used in this library is based partly on Jack
 // Ganssle's state button debouncer example shown in, "A Guide to Debouncing" 
@@ -124,7 +126,8 @@ Debouncer
         // 
         // Button Pressed
         // Description:
-        //      Checks to see if a button(s) were immediately pressed. 
+        //      Checks to see if a button(s) were immediately pressed, as of
+        //      the last call to ButtonProcess.
         // Parameters:
         //      GPIOButtonPins - The particular bits corresponding to the button 
         //          pins. The ORed combination of BUTTON_PIN_*.
@@ -135,13 +138,16 @@ Debouncer
         //      is 00000001, it means that button 0 (bit 0) has just been pressed 
         //      while button 5 (bit 5) has not been at the moment though it may 
         //      have been previously.
+        //      In other words, this function detects the leading edge of the
+        //      debounced signal.
         // 
         uint8_t ButtonPressed(uint8_t GPIOButtonPins);
         
         // 
         // Button Released
         // Description:
-        //      Checks to see if a button(s) were immediately released. 
+        //      Checks to see if a button(s) were immediately released, as of
+        //      the last call to ButtonProcess.
         // Parameters:
         //      GPIOButtonPins - The particular bits corresponding to the button 
         //          pins. The ORed combination of BUTTON_PIN_*.
@@ -152,6 +158,8 @@ Debouncer
         //      is 00000001, it means that button 0 (bit 0) has just been released 
         //      while button 5 (bit 5) has not been at the moment though it may 
         //      have been previously.
+        //      In other words, this function detects the trailing edge of the
+        //      debounced signal.
         // 
         uint8_t ButtonReleased(uint8_t GPIOButtonPins);
         
@@ -169,6 +177,8 @@ Debouncer
         //      button 1 (bit 1) is not currently being pressed and button 5 (bit 5) 
         //      is currently being pressed while the other buttons (if they are 
         //      buttons) are being masked out.
+        //      In other words, this function returns the current level of the
+        //      debounced signal.
         // 
         uint8_t ButtonCurrent(uint8_t GPIOButtonPins);
         
