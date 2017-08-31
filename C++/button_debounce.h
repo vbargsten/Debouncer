@@ -61,7 +61,7 @@
 // Macros and Globals
 //*********************************************************************************
 
-// NUM_BUTTON_STATES should be greater than 0 and less than or equal to 255.
+// MAX_BUTTON_STATES should be greater than 0 and less than or equal to 255.
 // 8 is a roundabout good number of states to have. At a practical minimum, the
 // the number of button states should be at least 3. Each button state consumes
 // 1 byte of RAM.
@@ -70,8 +70,14 @@
 // incorrectly debounced button. If this is small, the Debouncer instantiation 
 // will consume less RAM and take less time to debounce but will be more prone 
 // to incorrectly determining button presses and releases.
+#ifndef MAX_BUTTON_STATES
+#define MAX_BUTTON_STATES       8
+#endif
+
+// NUM_BUTTON_STATES may be redefined to a variable or function, to allow the
+// debounce time to be configured at run-time.
 #ifndef NUM_BUTTON_STATES
-#define NUM_BUTTON_STATES       8
+#define NUM_BUTTON_STATES       MAX_BUTTON_STATES
 #endif
                                 			// Binary Equivalent
 #define BUTTON_PIN_0            (0x0001)	// 0b00000001		
@@ -186,7 +192,7 @@ Debouncer
         // 
         // Holds the states that the particular port is transitioning through
         // 
-        uint8_t state[NUM_BUTTON_STATES];
+        uint8_t state[MAX_BUTTON_STATES];
         
         // 
         // Keeps up with where to store the next port info in the state array
