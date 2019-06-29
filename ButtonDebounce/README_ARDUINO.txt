@@ -32,6 +32,13 @@ Modifications:
 * Renamed files from button_debounce.* to ButtonDebounce.*
 * Created Arduino keywords.txt file
 
+Warning! The Arduino IDE Library Manager now has a library called ButtonDebounce
+by Maykon L. Capellari https://github.com/maykon/ButtonDebounce
+To avoid a naming conflict you need to rename the folder and the two C++ files,
+and also edit the #include in the renamed cpp file.
+Personally, I renamed the files to the same as the class name:
+    Debouncer.h and Debouncer.cpp .
+
 You should be able to copy the folder ButtonDebounce into 
 your Arduino working folder typically 
  C:\My Documents\Arduino\libraries\
