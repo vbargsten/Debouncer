@@ -1,26 +1,4 @@
 //*********************************************************************************
-// State Button Debouncer - Platform Independent
-// 
-// Revision: 1.6
-// 
-// Description: Debounces buttons on a single port being used by the application.
-// This module takes what the signal on a GPIO port is doing and removes
-// the oscillations caused by a bouncing button and tells the application if
-// the button(s) are debounced. This algorithm is robust against noise if the 
-// amount of allowable debouncing states is adequate. Below is an example of how 
-// the button debouncer would work in practice in relation to a single button:
-// 
-// Real Signal:     0011111111111110000000000000011111111111111111110000000000
-// Bouncy Signal:   0010110111111111010000000000001010111011111111110101000000
-// Debounced Sig:   0000000000000011000000000000000000000000000001110000000000
-// 
-// The debouncing algorithm used in this library is based partly on Jack
-// Ganssle's state button debouncer example shown in, "A Guide to Debouncing" 
-// Rev 4. http://www.ganssle.com/debouncing.htm
-// 
-// Revisions can be found here:
-// https://github.com/tcleg
-// 
 // Copyright (C) 2014 Trent Cleghorn , <trentoncleghorn@gmail.com>
 // 
 //                                  MIT License
@@ -47,8 +25,7 @@
 //*********************************************************************************
 // Headers
 //*********************************************************************************
-// renamed file from original "button_debounce.h" 
-#include "ButtonDebounce.h"
+#include "button_debounce.h"
 
 //*********************************************************************************
 // Class Functions
@@ -84,10 +61,20 @@ ButtonProcess(uint8_t portStatus)
     state[index] = portStatus ^ pullType;
     
     // Debounce the buttons
-    for(i = 0, debouncedState = 0xFF; i < NUM_BUTTON_STATES; i++)
+    uint8_t consistentlyHigh = 0xFF;
+    uint8_t consistentlyLow  = 0xFF;
+    for(i = 0; i < NUM_BUTTON_STATES; i++)
     {
-        debouncedState &= state[i];
+        consistentlyHigh &=  state[i];
+        consistentlyLow  &= ~state[i];
     }
+    //  Previous                                           New
+    //  debouncedState  consistentlyHigh  consistentlyLow  debouncedState
+    //  -               1                 -                1
+    //  -               -                 1                0
+    //  0               0                 0                0
+    //  1               0                 0                1
+    debouncedState = consistentlyHigh | (debouncedState & ~consistentlyLow);
     
     // Check to make sure the index hasn't gone over the limit
     index++;

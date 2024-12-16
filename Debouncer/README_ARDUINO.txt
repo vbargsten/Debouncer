@@ -27,19 +27,16 @@ Adapted for Arduino by
 Louis Bertrand <louis.bertrand@durhamcollege.ca>
 March 2016
 
+Merged extension to also filter falling signal from michaelbgreen
+https://github.com/michaelbgreen/Button_Debouncer
+
 Modifications:
 * Used only C++ implementation
 * Renamed files from button_debounce.* to ButtonDebounce.*
 * Created Arduino keywords.txt file
+* Renamed to Debouncer consistent with class name
 
-Warning! The Arduino IDE Library Manager now has a library called ButtonDebounce
-by Maykon L. Capellari https://github.com/maykon/ButtonDebounce
-To avoid a naming conflict you need to rename the folder and the two C++ files,
-and also edit the #include in the renamed cpp file.
-Personally, I renamed the files to the same as the class name:
-    Debouncer.h and Debouncer.cpp .
-
-You should be able to copy the folder ButtonDebounce into 
+You should be able to copy the folder Debouncer into 
 your Arduino working folder typically 
  C:\My Documents\Arduino\libraries\
 and use the library in your sketch. 
@@ -48,7 +45,7 @@ and use the library in your sketch.
 2. Import the library:
    Sketch > Import Library...
    (this will create a line 
-    #include <ButtonDebounce.h>
+    #include <Debouncer.h>
 3. Instantiate one or more Debouncer variables
    /* Use BUTTON_PIN_0 if the switch is active-low
     * BUTTON_PIN_0 is declared in ButtonDebounce.h
