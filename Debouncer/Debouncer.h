@@ -10,9 +10,11 @@
 // amount of allowable debouncing states is adequate. Below is an example of how 
 // the button debouncer would work in practice in relation to a single button:
 // 
-// Real Signal:     0011111111111110000000000000011111111111111111110000000000
-// Bouncy Signal:   0010110111111111010000000000001010111011111111110101000000
-// Debounced Sig:   0000000000000011000000000000000000000000000001110000000000
+// Real Signal:      00111111111111100000000000000
+// Bouncy Signal:    00101101111111110100000000000
+// Debounced Signal: 00000000000000111111111110000
+// ButtonPressed:    00000000000000100000000000000
+// ButtonReleased:   00000000000000000000000001000
 // 
 // The debouncing algorithm used in this library is based partly on Jack
 // Ganssle's state button debouncer example shown in, "A Guide to Debouncing" 
@@ -59,7 +61,7 @@
 // Macros and Globals
 //*********************************************************************************
 
-// NUM_BUTTON_STATES should be greater than 0 and less than or equal to 255.
+// MAX_BUTTON_STATES should be greater than 0 and less than or equal to 255.
 // 8 is a roundabout good number of states to have. At a practical minimum, the
 // the number of button states should be at least 3. Each button state consumes
 // 1 byte of RAM.
@@ -68,8 +70,14 @@
 // incorrectly debounced button. If this is small, the Debouncer instantiation 
 // will consume less RAM and take less time to debounce but will be more prone 
 // to incorrectly determining button presses and releases.
+#ifndef MAX_BUTTON_STATES
+#define MAX_BUTTON_STATES       8
+#endif
+
+// NUM_BUTTON_STATES may be redefined to a variable or function, to allow the
+// debounce time to be configured at run-time.
 #ifndef NUM_BUTTON_STATES
-#define NUM_BUTTON_STATES       8
+#define NUM_BUTTON_STATES       MAX_BUTTON_STATES
 #endif
                                 			// Binary Equivalent
 #define BUTTON_PIN_0            (0x0001)	// 0b00000001		
@@ -124,7 +132,8 @@ Debouncer
         // 
         // Button Pressed
         // Description:
-        //      Checks to see if a button(s) were immediately pressed. 
+        //      Checks to see if a button(s) were immediately pressed, as of
+        //      the last call to ButtonProcess.
         // Parameters:
         //      GPIOButtonPins - The particular bits corresponding to the button 
         //          pins. The ORed combination of BUTTON_PIN_*.
@@ -135,13 +144,16 @@ Debouncer
         //      is 00000001, it means that button 0 (bit 0) has just been pressed 
         //      while button 5 (bit 5) has not been at the moment though it may 
         //      have been previously.
+        //      In other words, this function detects the leading edge of the
+        //      debounced signal.
         // 
         uint8_t ButtonPressed(uint8_t GPIOButtonPins);
         
         // 
         // Button Released
         // Description:
-        //      Checks to see if a button(s) were immediately released. 
+        //      Checks to see if a button(s) were immediately released, as of
+        //      the last call to ButtonProcess.
         // Parameters:
         //      GPIOButtonPins - The particular bits corresponding to the button 
         //          pins. The ORed combination of BUTTON_PIN_*.
@@ -152,6 +164,8 @@ Debouncer
         //      is 00000001, it means that button 0 (bit 0) has just been released 
         //      while button 5 (bit 5) has not been at the moment though it may 
         //      have been previously.
+        //      In other words, this function detects the trailing edge of the
+        //      debounced signal.
         // 
         uint8_t ButtonReleased(uint8_t GPIOButtonPins);
         
@@ -169,6 +183,8 @@ Debouncer
         //      button 1 (bit 1) is not currently being pressed and button 5 (bit 5) 
         //      is currently being pressed while the other buttons (if they are 
         //      buttons) are being masked out.
+        //      In other words, this function returns the current level of the
+        //      debounced signal.
         // 
         uint8_t ButtonCurrent(uint8_t GPIOButtonPins);
         
@@ -176,7 +192,7 @@ Debouncer
         // 
         // Holds the states that the particular port is transitioning through
         // 
-        uint8_t state[NUM_BUTTON_STATES];
+        uint8_t state[MAX_BUTTON_STATES];
         
         // 
         // Keeps up with where to store the next port info in the state array
